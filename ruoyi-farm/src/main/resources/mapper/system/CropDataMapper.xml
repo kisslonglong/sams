@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.CropDataMapper">
+
+    <!-- 定义结果映射 -->
+    <resultMap type="com.ruoyi.system.domain.CropData" id="CropDataResult">
+        <result property="year" column="year_date"/>
+        <result property="wheat" column="wheat"/>
+        <result property="cotton" column="cotton"/>
+        <result property="corn" column="corn"/>
+    </resultMap>
+
+    <!-- 查询作物数据列表 -->
+    <select id="selectCropDataList" resultMap="CropDataResult">
+        SELECT  year_date, wheat, cotton, corn
+        FROM crop_data
+        <!-- 添加条件或排序 -->
+    </select>
+
+</mapper>

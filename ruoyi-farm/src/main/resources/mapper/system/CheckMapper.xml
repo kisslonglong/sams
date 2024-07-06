@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.CheckMapper">
+    
+    <resultMap type="Check" id="CheckResult">
+        <result property="id"    column="id"    />
+        <result property="userId"    column="user_id"    />
+        <result property="nickName"    column="nick_name"    />
+        <result property="startDate"    column="start_date"    />
+        <result property="endDate"    column="end_date"    />
+        <result property="reasonLeave"    column="reason_leave"    />
+        <result property="isAsk"    column="is_ask"    />
+        <result property="date" column="date"/>
+        <result property="status" column="status"/>
+    </resultMap>
+
+    <sql id="selectCheckVo">
+        select id, user_id, nick_name, start_date, end_date, reason_leave, is_ask,status from checkin
+    </sql>
+
+    <select id="selectCheckList" parameterType="Check" resultMap="CheckResult">
+        <include refid="selectCheckVo"/>
+        <where>  
+            <if test="nickName != null  and nickName != ''"> and nick_name like concat('%', #{nickName}, '%')</if>
+            <if test="startDate != null "> and start_date = #{startDate}</if>
+            <if test="endDate != null "> and end_date = #{endDate}</if>
+             <if test="date!=null">and DATE(check_date) = #{date}</if>
+
+        </where>
+    </select>
+    
+    <select id="selectCheckById" parameterType="Long" resultMap="CheckResult">
+        <include refid="selectCheckVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertCheck" parameterType="Check">
+        insert into checkin
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="userId != null">user_id,</if>
+            <if test="nickName != null">nick_name,</if>
+            <if test="startDate != null">start_date,</if>
+            <if test="endDate != null">end_date,</if>
+            <if test="reasonLeave != null">reason_leave,</if>
+            <if test="isAsk != null">is_ask,</if>
+            <if test="date != null">check_date,</if>
+            <if test="status != null">status,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="userId != null">#{userId},</if>
+            <if test="nickName != null">#{nickName},</if>
+            <if test="startDate != null">#{startDate},</if>
+            <if test="endDate != null">#{endDate},</if>
+            <if test="reasonLeave != null">#{reasonLeave},</if>
+            <if test="isAsk != null">#{isAsk},</if>
+            <if test="date != null">#{date},</if>
+            <if test="status != null">#{status},</if>
+         </trim>
+    </insert>
+
+    <update id="updateCheck" parameterType="Check">
+        update checkin
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="nickName != null">nick_name = #{nickName},</if>
+            <if test="startDate != null">start_date = #{startDate},</if>
+            <if test="endDate != null">end_date = #{endDate},</if>
+            <if test="reasonLeave != null">reason_leave = #{reasonLeave},</if>
+            <if test="isAsk != null">is_ask = #{isAsk},</if>
+            <if test="date != null">check_date = #{date},</if>
+            <if test="status!=null">status = #{status}</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteCheckById" parameterType="Long">
+        delete from checkin where id = #{id}
+    </delete>
+
+    <delete id="deleteCheckByIds" parameterType="String">
+        delete from checkin where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

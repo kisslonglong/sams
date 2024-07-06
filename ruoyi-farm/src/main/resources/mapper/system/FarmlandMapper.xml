@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.FarmlandMapper">
+    
+    <resultMap type="Farmland" id="FarmlandResult">
+        <result property="id"    column="id"    />
+        <result property="name"    column="name"    />
+        <result property="imgUrl"    column="img_url"    />
+        <result property="area"    column="area"    />
+        <result property="adress"    column="adress"    />
+        <result property="longitude"    column="longitude"    />
+        <result property="latitude"    column="latitude"    />
+        <result property="soilType"    column="soil_type"    />
+    </resultMap>
+
+    <sql id="selectFarmlandVo">
+        select id, name, img_url, area, adress, longitude, latitude, soil_type from farmland
+    </sql>
+
+    <select id="selectFarmlandList" parameterType="Farmland" resultMap="FarmlandResult">
+        <include refid="selectFarmlandVo"/>
+        <where>  
+            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
+            <if test="adress != null  and adress != ''"> and adress = #{adress}</if>
+            <if test="soilType != null  and soilType != ''"> and soil_type = #{soilType}</if>
+        </where>
+    </select>
+    
+    <select id="selectFarmlandById" parameterType="Long" resultMap="FarmlandResult">
+        <include refid="selectFarmlandVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertFarmland" parameterType="Farmland">
+        insert into farmland
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="name != null">name,</if>
+            <if test="imgUrl != null">img_url,</if>
+            <if test="area != null">area,</if>
+            <if test="adress != null">adress,</if>
+            <if test="longitude != null">longitude,</if>
+            <if test="latitude != null">latitude,</if>
+            <if test="soilType != null">soil_type,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="name != null">#{name},</if>
+            <if test="imgUrl != null">#{imgUrl},</if>
+            <if test="area != null">#{area},</if>
+            <if test="adress != null">#{adress},</if>
+            <if test="longitude != null">#{longitude},</if>
+            <if test="latitude != null">#{latitude},</if>
+            <if test="soilType != null">#{soilType},</if>
+         </trim>
+    </insert>
+
+    <update id="updateFarmland" parameterType="Farmland">
+        update farmland
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="name != null">name = #{name},</if>
+            <if test="imgUrl != null">img_url = #{imgUrl},</if>
+            <if test="area != null">area = #{area},</if>
+            <if test="adress != null">adress = #{adress},</if>
+            <if test="longitude != null">longitude = #{longitude},</if>
+            <if test="latitude != null">latitude = #{latitude},</if>
+            <if test="soilType != null">soil_type = #{soilType},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteFarmlandById" parameterType="Long">
+        delete from farmland where id = #{id}
+    </delete>
+
+    <delete id="deleteFarmlandByIds" parameterType="String">
+        delete from farmland where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

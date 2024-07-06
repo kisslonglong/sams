@@ -1,5 +1,7 @@
 package com.ruoyi.common.core.domain.model;
 
+import com.ruoyi.common.core.domain.entity.SysRole;
+
 /**
  * 用户注册对象
  * 
@@ -8,4 +10,13 @@ package com.ruoyi.common.core.domain.model;
 public class RegisterBody extends LoginBody
 {
 
+private Long roleId;
+
+    public Long getRoleId() {
+        return roleId;
+    }
+
+    public void setRoleId(Long roleId) {
+        this.roleId = roleId;
+    }
 }

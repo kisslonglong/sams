@@ -1,5 +1,6 @@
 'use strict'
 const path = require('path')
+// const { VueLoaderPlugin } = require('vue-loader')
 
 function resolve(dir) {
   return path.join(__dirname, dir)
@@ -27,6 +28,16 @@ module.exports = {
   lintOnSave: process.env.NODE_ENV === 'development',
   // 如果你不需要生产环境的 source map，可以将其设置为 false 以加速生产环境构建。
   productionSourceMap: false,
+
+
+  // module: {
+  //   rules: [
+  //     {
+  //       test: /\.vue$/,
+  //       loader: 'vue-loader'
+  //     }
+  //   ]
+  // },
   // webpack-dev-server 相关配置
   devServer: {
     host: '0.0.0.0',
@@ -59,6 +70,7 @@ module.exports = {
       }
     },
     plugins: [
+      // new VueLoaderPlugin(),
       // http://doc.ruoyi.vip/ruoyi-vue/other/faq.html#使用gzip解压缩静态文件
       new CompressionPlugin({
         cache: false,                                  // 不启用文件缓存
@@ -67,7 +79,7 @@ module.exports = {
         algorithm: 'gzip',                             // 使用gzip压缩
         minRatio: 0.8,                                 // 压缩比例，小于 80% 的文件不会被压缩
         deleteOriginalAssets: false                    // 压缩后删除原文件
-      })
+      }),
     ],
   },
   chainWebpack(config) {
@@ -91,6 +103,22 @@ module.exports = {
       })
       .end()
 
+    config.module
+      .rule('js')
+      .test(/\.js$/)
+      .use('babel-loader')
+      .loader('babel-loader')
+      .tap(options => {
+        return options;
+      })
+      .end();
+    // config.module
+    //   .rule('js')
+    //   .use('babel-loader')
+    //   .loader('babel-loader')
+    //   .tap(options => {
+    //     return options;
+    //   });
     config.when(process.env.NODE_ENV !== 'development', config => {
           config
             .plugin('ScriptExtHtmlWebpackPlugin')

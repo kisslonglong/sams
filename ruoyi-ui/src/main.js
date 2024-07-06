@@ -37,7 +37,10 @@ import DictTag from '@/components/DictTag'
 import VueMeta from 'vue-meta'
 // 字典数据组件
 import DictData from '@/components/DictData'
+// import map from 'c-mapview'//导入组件
+import map from "@/components/map/index.js"
 
+import settings from './settings'
 // 全局方法挂载
 Vue.prototype.getDicts = getDicts
 Vue.prototype.getConfigKey = getConfigKey
@@ -57,7 +60,8 @@ Vue.component('Editor', Editor)
 Vue.component('FileUpload', FileUpload)
 Vue.component('ImageUpload', ImageUpload)
 Vue.component('ImagePreview', ImagePreview)
-
+map.initMap(settings.mapKey,settings.mapSecurity)//初始化地图 key secret
+Vue.use (map)
 Vue.use(directive)
 Vue.use(plugins)
 Vue.use(VueMeta)

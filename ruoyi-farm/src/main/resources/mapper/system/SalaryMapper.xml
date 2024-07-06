@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.SalaryMapper">
+    
+    <resultMap type="Salary" id="SalaryResult">
+        <result property="id"    column="id"    />
+        <result property="userId"    column="user_id"    />
+        <result property="nickName"    column="nick_name"    />
+        <result property="baseWage"    column="base_wage"    />
+        <result property="performanceSalary"    column="performance_salary"    />
+        <result property="fiveInsurance"    column="five_insurance"    />
+        <result property="sum"    column="sum"    />
+        <result property="name" column="name"/>
+    </resultMap>
+
+    <sql id="selectSalaryVo">
+        select id, user_id, nick_name, base_wage, performance_salary, five_insurance, sum,name from salary
+    </sql>
+
+    <select id="selectSalaryList" parameterType="Salary" resultMap="SalaryResult">
+        <include refid="selectSalaryVo"/>
+        <where>  
+            <if test="userId != null "> and user_id = #{userId}</if>
+            <if test="nickName != null  and nickName != ''"> and nick_name like concat('%', #{nickName}, '%')</if>
+            <if test="baseWage != null "> and base_wage = #{baseWage}</if>
+            <if test="performanceSalary != null "> and performance_salary = #{performanceSalary}</if>
+            <if test="fiveInsurance != null "> and five_insurance = #{fiveInsurance}</if>
+            <if test="sum != null "> and sum = #{sum}</if>
+
+        </where>
+    </select>
+    
+    <select id="selectSalaryById" parameterType="Long" resultMap="SalaryResult">
+        <include refid="selectSalaryVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertSalary" parameterType="Salary" useGeneratedKeys="true" keyProperty="id">
+        insert into salary
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId != null">user_id,</if>
+            <if test="nickName != null">nick_name,</if>
+            <if test="baseWage != null">base_wage,</if>
+            <if test="performanceSalary != null">performance_salary,</if>
+            <if test="fiveInsurance != null">five_insurance,</if>
+            <if test="sum != null">sum,</if>
+            <if test="name!=null">name,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userId != null">#{userId},</if>
+            <if test="nickName != null">#{nickName},</if>
+            <if test="baseWage != null">#{baseWage},</if>
+            <if test="performanceSalary != null">#{performanceSalary},</if>
+            <if test="fiveInsurance != null">#{fiveInsurance},</if>
+            <if test="sum != null">#{sum},</if>
+            <if test="name!=null">#{name},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSalary" parameterType="Salary">
+        update salary
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="nickName != null">nick_name = #{nickName},</if>
+            <if test="baseWage != null">base_wage = #{baseWage},</if>
+            <if test="performanceSalary != null">performance_salary = #{performanceSalary},</if>
+            <if test="fiveInsurance != null">five_insurance = #{fiveInsurance},</if>
+            <if test="sum != null">sum = #{sum},</if>
+            <if test="name !=null">name=#{name}</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSalaryById" parameterType="Long">
+        delete from salary where id = #{id}
+    </delete>
+
+    <delete id="deleteSalaryByIds" parameterType="String">
+        delete from salary where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.HarvestRecordsMapper">
+    
+    <resultMap type="HarvestRecords" id="HarvestRecordsResult">
+        <result property="id"    column="id"    />
+        <result property="cropName"    column="crop_name"    />
+        <result property="yield"    column="yield"    />
+        <result property="harvestDate"    column="harvest_date"    />
+        <result property="ownedFarmlandId"    column="owned_farmland_id"    />
+        <association property="farmland" javaType="com.ruoyi.system.domain.Farmland">
+            <id property="id" column="id"/>
+            <result property="name" column="name"/>
+            <result property="area" column="area"/>
+            <result property="adress" column="adress"/>
+            <result property="soilType" column="soil_type"/>
+            <result property="imgUrl" column="img_url"/>
+            <result property="longitude" column="longitude"/>
+        </association>
+    </resultMap>
+
+
+
+    <sql id="selectHarvestRecordsVo">
+        select h.id, h.crop_name, h.yield, h.harvest_date, h.owned_farmland_id,f.name, f.area, f.adress, f.soil_type, f.img_url, f.longitude from harvest_records as h
+        left join farmland as f on h.owned_farmland_id = f.id
+    </sql>
+
+    <select id="selectHarvestRecordsList" parameterType="HarvestRecords" resultMap="HarvestRecordsResult">
+        <include refid="selectHarvestRecordsVo"/>
+        <where>  
+            <if test="cropName != null  and cropName != ''"> and crop_name like concat('%', #{cropName}, '%')</if>
+            <if test="yield != null "> and yield = #{yield}</if>
+            <if test="harvestDate != null "> and harvest_date = #{harvestDate}</if>
+            <if test="ownedFarmlandId != null "> and owned_farmland_id = #{ownedFarmlandId}</if>
+        </where>
+    </select>
+    
+    <select id="selectHarvestRecordsById" parameterType="Long" resultMap="HarvestRecordsResult">
+        <include refid="selectHarvestRecordsVo"/>
+        where h.id = #{id}
+    </select>
+
+    <insert id="insertHarvestRecords" parameterType="HarvestRecords">
+        insert into harvest_records
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="cropName != null">crop_name,</if>
+            <if test="yield != null">yield,</if>
+            <if test="harvestDate != null">harvest_date,</if>
+            <if test="ownedFarmlandId != null">owned_farmland_id,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="cropName != null">#{cropName},</if>
+            <if test="yield != null">#{yield},</if>
+            <if test="harvestDate != null">#{harvestDate},</if>
+            <if test="ownedFarmlandId != null">#{ownedFarmlandId},</if>
+         </trim>
+    </insert>
+
+    <update id="updateHarvestRecords" parameterType="HarvestRecords">
+        update harvest_records
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="cropName != null">crop_name = #{cropName},</if>
+            <if test="yield != null">yield = #{yield},</if>
+            <if test="harvestDate != null">harvest_date = #{harvestDate},</if>
+            <if test="ownedFarmlandId != null">owned_farmland_id = #{ownedFarmlandId},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteHarvestRecordsById" parameterType="Long">
+        delete from harvest_records where id = #{id}
+    </delete>
+
+    <delete id="deleteHarvestRecordsByIds" parameterType="String">
+        delete from harvest_records where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

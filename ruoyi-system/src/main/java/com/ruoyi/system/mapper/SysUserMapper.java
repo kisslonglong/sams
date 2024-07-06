@@ -11,6 +11,9 @@ import com.ruoyi.common.core.domain.entity.SysUser;
  */
 public interface SysUserMapper
 {
+
+    public List<SysUser> selectByRoleId(@Param("roleId") Long roleId);
+
     /**
      * 根据条件分页查询用户列表
      * 

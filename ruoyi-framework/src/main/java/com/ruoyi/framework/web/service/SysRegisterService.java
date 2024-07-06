@@ -1,10 +1,9 @@
 package com.ruoyi.framework.web.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import com.ruoyi.common.constant.CacheConstants;
 import com.ruoyi.common.constant.Constants;
 import com.ruoyi.common.constant.UserConstants;
+import com.ruoyi.common.core.domain.entity.SysRole;
 import com.ruoyi.common.core.domain.entity.SysUser;
 import com.ruoyi.common.core.domain.model.RegisterBody;
 import com.ruoyi.common.core.redis.RedisCache;
@@ -16,7 +15,13 @@ import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.framework.manager.AsyncManager;
 import com.ruoyi.framework.manager.factory.AsyncFactory;
 import com.ruoyi.system.service.ISysConfigService;
+import com.ruoyi.system.service.ISysRoleService;
 import com.ruoyi.system.service.ISysUserService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 注册校验方法
@@ -35,6 +40,9 @@ public class SysRegisterService
     @Autowired
     private RedisCache redisCache;
 
+    @Autowired
+    private ISysRoleService roleService;
+
     /**
      * 注册
      */
@@ -50,6 +58,8 @@ public class SysRegisterService
         {
             validateCaptcha(username, registerBody.getCode(), registerBody.getUuid());
         }
+
+
 
         if (StringUtils.isEmpty(username))
         {
@@ -77,7 +87,13 @@ public class SysRegisterService
         {
             sysUser.setNickName(username);
             sysUser.setPassword(SecurityUtils.encryptPassword(password));
+//            List<Long> roles = new ArrayList<Long>();
+//            roles.add(registerBody.getRoleId());
+            Long[] roleId = new Long[]{registerBody.getRoleId()};
+            sysUser.setRoleIds(roleId);
             boolean regFlag = userService.registerUser(sysUser);
+            userService.insertUserAuth(sysUser.getUserId(), sysUser.getRoleIds());//添加权限
+
             if (!regFlag)
             {
                 msg = "注册失败,请联系系统管理人员";
@@ -87,6 +103,8 @@ public class SysRegisterService
                 AsyncManager.me().execute(AsyncFactory.recordLogininfor(username, Constants.REGISTER, MessageUtils.message("user.register.success")));
             }
         }
+
+
         return msg;
     }
 

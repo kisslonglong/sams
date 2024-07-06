@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.CropMapper">
+    
+    <resultMap type="Crop" id="CropResult">
+        <result property="id"    column="id"    />
+        <result property="cropType"    column="crop_type"    />
+        <result property="livespan"    column="livespan"    />
+        <result property="yield"    column="yield"    />
+        <result property="imageUrl"    column="image_url"    />
+    </resultMap>
+
+    <sql id="selectCropVo">
+        select id, crop_type, livespan, yield, image_url from crop
+    </sql>
+
+    <select id="selectCropList" parameterType="Crop" resultMap="CropResult">
+        <include refid="selectCropVo"/>
+        <where>  
+            <if test="cropType != null  and cropType != ''"> and crop_type = #{cropType}</if>
+            <if test="livespan != null  and livespan != ''"> and livespan = #{livespan}</if>
+            <if test="yield != null  and yield != ''"> and yield = #{yield}</if>
+            <if test="imageUrl != null  and imageUrl != ''"> and image_url = #{imageUrl}</if>
+        </where>
+    </select>
+    
+    <select id="selectCropById" parameterType="Long" resultMap="CropResult">
+        <include refid="selectCropVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertCrop" parameterType="Crop" useGeneratedKeys="true" keyProperty="id">
+        insert into crop
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="cropType != null">crop_type,</if>
+            <if test="livespan != null">livespan,</if>
+            <if test="yield != null">yield,</if>
+            <if test="imageUrl != null">image_url,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="cropType != null">#{cropType},</if>
+            <if test="livespan != null">#{livespan},</if>
+            <if test="yield != null">#{yield},</if>
+            <if test="imageUrl != null">#{imageUrl},</if>
+         </trim>
+    </insert>
+
+    <update id="updateCrop" parameterType="Crop">
+        update crop
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="cropType != null">crop_type = #{cropType},</if>
+            <if test="livespan != null">livespan = #{livespan},</if>
+            <if test="yield != null">yield = #{yield},</if>
+            <if test="imageUrl != null">image_url = #{imageUrl},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteCropById" parameterType="Long">
+        delete from crop where id = #{id}
+    </delete>
+
+    <delete id="deleteCropByIds" parameterType="String">
+        delete from crop where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>
